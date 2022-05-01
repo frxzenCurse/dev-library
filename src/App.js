@@ -1,23 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect } from "react";
+import { BrowserRouter } from "react-router-dom";
+import { AppRouter } from "./components/AppRouter";
+import { Navbar } from "./components/Navbar";
+import { fetchTechnologies } from "./redux/reducers/actionCreators";
+import { useSelector, useDispatch } from 'react-redux'
+import { Loader } from "./components/Loader";
 
 function App() {
+  const technology = useSelector(state => state.technology)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(fetchTechnologies())
+  }, [])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <BrowserRouter>
+        {technology.isLoading
+          ?
+          <Loader />
+          :
+          <div className="row">
+            <Navbar technologies={technology.technologies} />
+            <AppRouter/>
+          </div>
+        }
+      </BrowserRouter>
     </div>
   );
 }
